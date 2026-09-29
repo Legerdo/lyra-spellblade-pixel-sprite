@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="ko"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1"><link rel="icon" href="data:,">
+<title>Lyra Spellblade · Pixelorama sprite review</title>
+<style>
+:root{--bg:#141726;--panel:#1d2136;--line:#2e3452;--text:#e8e9f6;--dim:#9aa0c3;--pink:#f36fa3;--cyan:#86f2ff}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font:15px/1.55 system-ui,"Segoe UI","Malgun Gothic",sans-serif}
+header{padding:22px 28px 10px;border-bottom:1px solid var(--line)}h1{margin:0;font-size:22px;letter-spacing:.3px}
+h1 b{color:var(--pink)}header p{margin:4px 0 0;color:var(--dim)}
+main{padding:18px 28px 40px;display:grid;gap:22px}
+section{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:16px 18px}
+h2{margin:0 0 12px;font-size:16px;color:var(--cyan)}
+.controls{display:flex;gap:16px;flex-wrap:wrap;align-items:center;color:var(--dim)}
+.controls label{display:flex;gap:6px;align-items:center}
+button,select{background:#262b47;color:var(--text);border:1px solid var(--line);border-radius:6px;padding:5px 10px;font:inherit}
+button:focus-visible,select:focus-visible,input:focus-visible{outline:2px solid var(--cyan);outline-offset:2px}
+.row{display:flex;gap:18px;flex-wrap:wrap;align-items:flex-end}
+figure{margin:0;display:flex;flex-direction:column;gap:6px;align-items:center}
+figcaption{font-size:13px;color:var(--dim)}figcaption strong{color:var(--text)}
+canvas{image-rendering:pixelated;display:block}
+.checker canvas.sprite{background-color:#3a3e4a;background-image:linear-gradient(45deg,#484d5a 25%,transparent 25%,transparent 75%,#484d5a 75%),linear-gradient(45deg,#484d5a 25%,transparent 25%,transparent 75%,#484d5a 75%);background-size:16px 16px;background-position:0 0,8px 8px}
+.plain canvas.sprite{background:#20243a}
+#contact-sheet{display:grid;grid-template-columns:repeat(5,max-content);gap:8px}
+#contact-sheet figure{background:#171a2c;border-radius:6px;padding:6px}
+.tag{display:inline-block;padding:0 6px;border-radius:4px;font-size:12px;color:#141726}
+.t-idle{background:#8fd3ff}.t-run{background:#ffb8d2}.t-attack-a{background:#86f2ff}.t-attack-b{background:#ff5cb6}
+.note{color:var(--dim);font-size:13px;margin:10px 0 0}
+</style></head>
+<body class="checker">
+<header><h1><b>Lyra</b> · Silver Twin-tail Spellblade</h1>
+<p>140×168 px per frame · 20 frames · Pixelorama v1.2.3-stable source <code>character_action.pxo</code> · every image is shown with nearest-neighbour scaling</p></header>
+<main>
+<section aria-labelledby="h-live"><h2 id="h-live">Live previews</h2>
+<div class="controls">
+<label><input type="checkbox" id="checker-toggle" checked> Checkerboard background</label>
+<label>Scale <select id="scale-select"><option value="2">2×</option><option value="3" selected>3×</option><option value="4">4×</option></select></label>
+<button id="pause-btn" type="button" aria-pressed="false">Pause</button>
+</div>
+<div id="animation-preview" class="row" style="margin-top:14px"></div>
+<p class="note">Idle 500 ms / Run 90 ms (loop) · Attack A and Attack B 100 ms (one-shot, holds 400 ms after the last frame, then replays)</p>
+</section>
+<section aria-labelledby="h-native"><h2 id="h-native">Native 1× (actual game size)</h2>
+<div id="native-size-example" class="row"></div></section>
+<section aria-labelledby="h-equal"><h2 id="h-equal">Large nearest-neighbour preview (all actions at the same display size, 4×)</h2>
+<div id="equal-display-size-example" class="row"></div></section>
+<section aria-labelledby="h-contact"><h2 id="h-contact">20-frame contact sheet (2×, red line = ground y=140)</h2>
+<div id="contact-sheet"></div></section>
+</main>
+<script>
+"use strict";
+const META = {"sheet": "exports/character_action.png", "cell": [140, 168], "columns": 5, "frames": [{"id": "idle:0", "index": 0, "col": 0, "row": 0}, {"id": "idle:1", "index": 1, "col": 1, "row": 0}, {"id": "run:0", "index": 2, "col": 2, "row": 0}, {"id": "run:1", "index": 3, "col": 3, "row": 0}, {"id": "run:2", "index": 4, "col": 4, "row": 0}, {"id": "run:3", "index": 5, "col": 0, "row": 1}, {"id": "run:4", "index": 6, "col": 1, "row": 1}, {"id": "run:5", "index": 7, "col": 2, "row": 1}, {"id": "attack-a:0", "index": 8, "col": 3, "row": 1}, {"id": "attack-a:1", "index": 9, "col": 4, "row": 1}, {"id": "attack-a:2", "index": 10, "col": 0, "row": 2}, {"id": "attack-a:3", "index": 11, "col": 1, "row": 2}, {"id": "attack-a:4", "index": 12, "col": 2, "row": 2}, {"id": "attack-a:5", "index": 13, "col": 3, "row": 2}, {"id": "attack-b:0", "index": 14, "col": 4, "row": 2}, {"id": "attack-b:1", "index": 15, "col": 0, "row": 3}, {"id": "attack-b:2", "index": 16, "col": 1, "row": 3}, {"id": "attack-b:3", "index": 17, "col": 2, "row": 3}, {"id": "attack-b:4", "index": 18, "col": 3, "row": 3}, {"id": "attack-b:5", "index": 19, "col": 4, "row": 3}], "animations": {"idle": {"start": 0, "count": 2, "ms": 500, "loop": true}, "run": {"start": 2, "count": 6, "ms": 90, "loop": true}, "attack-a": {"start": 8, "count": 6, "ms": 100, "loop": false}, "attack-b": {"start": 14, "count": 6, "ms": 100, "loop": false}}, "oneShotHoldMs": 400};
+const LABEL = {"idle":"Idle","run":"Run","attack-a":"Attack A · rising slash","attack-b":"Attack B · magic sword wave"};
+const [CW, CH] = META.cell;
+const sheet = new Image();
+window.__lyra = {ready:false, log:{}, errors:[]};
+let paused = false;
+function frameRect(i){const f = META.frames[i]; return [f.col*CW, f.row*CH];}
+function makeCanvas(scale, cls){const c=document.createElement("canvas");c.width=CW*scale;c.height=CH*scale;c.className=cls||"sprite";
+  const g=c.getContext("2d");g.imageSmoothingEnabled=false;return c;}
+function draw(c, i, scale, ground){const g=c.getContext("2d");g.imageSmoothingEnabled=false;g.clearRect(0,0,c.width,c.height);
+  const [sx,sy]=frameRect(i);g.drawImage(sheet,sx,sy,CW,CH,0,0,CW*scale,CH*scale);
+  if(ground){g.fillStyle="rgba(255,90,90,0.9)";g.fillRect(0,140*scale,c.width,1);}}
+const players = [];
+function player(anim, canvas, scale, logKey){
+  const a = META.animations[anim];
+  const p = {anim, canvas, scale, frame:0, next:0, logKey};
+  p.step = (now)=>{
+    if(paused){p.next = now; return;}
+    if(now < p.next) return;
+    draw(canvas, a.start+p.frame, p.scale);
+    canvas.dataset.frame = String(p.frame);
+    if(logKey){const L=(window.__lyra.log[logKey] ||= []); if(L.length<400) L.push([p.frame, now]);}
+    const last = p.frame === a.count-1;
+    p.next = (p.next && now - p.next < 50 ? p.next : now) + a.ms + (last && !a.loop ? META.oneShotHoldMs : 0);
+    p.frame = (p.frame + 1) % a.count;
+  };
+  players.push(p); return p;
+}
+function tick(now){for(const p of players) p.step(now); requestAnimationFrame(tick);}
+function build(){
+  const live = document.getElementById("animation-preview");
+  const scale = +document.getElementById("scale-select").value;
+  for(const anim of Object.keys(META.animations)){
+    const fig=document.createElement("figure");
+    const c=makeCanvas(scale); c.id=anim+"-preview"; c.dataset.animationPreview=anim;
+    c.setAttribute("role","img"); c.setAttribute("aria-label",LABEL[anim]+" animation preview");
+    fig.append(c); const cap=document.createElement("figcaption");
+    const a=META.animations[anim]; cap.innerHTML=`<span class="tag t-${anim}">${anim}</span> <strong>${LABEL[anim]}</strong> · ${a.count}f · ${a.ms} ms`;
+    fig.append(cap); live.append(fig); player(anim, c, scale, anim);
+  }
+  const nat = document.getElementById("native-size-example");
+  for(const anim of Object.keys(META.animations)){
+    const fig=document.createElement("figure"); const c=makeCanvas(1); c.dataset.native=anim;
+    c.setAttribute("role","img"); c.setAttribute("aria-label",LABEL[anim]+" at native size");
+    fig.append(c); const cap=document.createElement("figcaption"); cap.textContent=LABEL[anim]+" · 1×"; fig.append(cap); nat.append(fig);
+    player(anim, c, 1, null);
+  }
+  const eq = document.getElementById("equal-display-size-example");
+  for(const anim of Object.keys(META.animations)){
+    const fig=document.createElement("figure"); const c=makeCanvas(4); c.dataset.large=anim;
+    c.setAttribute("role","img"); c.setAttribute("aria-label",LABEL[anim]+" at 4x");
+    fig.append(c); const cap=document.createElement("figcaption"); cap.textContent=LABEL[anim]+" · 4×"; fig.append(cap); eq.append(fig);
+    player(anim, c, 4, null);
+  }
+  const cs = document.getElementById("contact-sheet");
+  for(const f of META.frames){
+    const fig=document.createElement("figure"); const c=makeCanvas(2); c.dataset.contactFrame=f.id;
+    c.setAttribute("role","img"); c.setAttribute("aria-label","frame "+f.id);
+    draw(c, f.index, 2, true); fig.append(c);
+    const cap=document.createElement("figcaption"); cap.textContent=`#${f.index+1} ${f.id}`; fig.append(cap); cs.append(fig);
+  }
+  document.getElementById("checker-toggle").addEventListener("change",e=>{document.body.className=e.target.checked?"checker":"plain";});
+  document.getElementById("scale-select").addEventListener("change",e=>{const s=+e.target.value;
+    for(const p of players){ if(p.logKey){p.scale=s;p.canvas.width=CW*s;p.canvas.height=CH*s;p.next=0;} }});
+  const pb=document.getElementById("pause-btn");
+  pb.addEventListener("click",()=>{paused=!paused;pb.textContent=paused?"Play":"Pause";pb.setAttribute("aria-pressed",String(paused));});
+  window.__lyra.ready = true;
+  requestAnimationFrame(tick);
+}
+sheet.onload = build;
+sheet.onerror = ()=>{window.__lyra.errors.push("sheet failed to load");};
+sheet.src = META.sheet;
+</script>
+</body></html>

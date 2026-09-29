@@ -1,0 +1,10 @@
+{
+	"name": "LyraDriver",
+	"display_name": "Lyra Spellblade Driver",
+	"description": "Local authoring/QA driver for the Lyra spellblade sprite. Runs only when LYRA_MODE is set.",
+	"author": "local",
+	"version": "1.0",
+	"license": "MIT",
+	"supported_api_versions": [8, 9, 10],
+	"nodes": ["Main.tscn"]
+}
